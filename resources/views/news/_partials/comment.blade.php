@@ -2,10 +2,10 @@
 $id = \Illuminate\Support\Str::random();
 ?>
 
-<div class="card mb-3 @if($active ?? false) bg-secondary @endif">
+<div class="card mb-3 @if($active ?? false) bg-secondary @endif" style="width: 100%">
 
-    @if($post ?? false)
-        <a href="{{route('posts.show', $comment->post)}}" class="card-header">{{$comment->post->title}}</a>
+    @if($news ?? false)
+        <a href="{{route('news.show', $comment->news)}}" class="card-header">{{$comment->news->title}}</a>
     @endif
 
     <div class="card-body">
@@ -25,19 +25,20 @@ $id = \Illuminate\Support\Str::random();
             </a>
 
             <form id="comment-delete-{{$comment->id}}" action="{{ route('comments.destroy', $comment) }}"
-                  method="POST">
-                @csrf @method('DELETE')
+                  method="post">
+                @csrf
+                @method('delete')
             </form>
         @endif
     </small>
 </div>
 
-@if($comment->user_id == optional(auth()->user())->id)
+@if($comment->user_id === optional(auth()->user())->id)
     <script>
-        let deleteLink = document.getElementById('comment-delete-{{$id}}');
-        deleteLink.addEventListener('click', function (event) {
+        let delete_link = document.getElementById('comment-delete-{{$id}}');
+        delete_link.addEventListener('click', function (event) {
             event.preventDefault();
-            let target = deleteLink.dataset.target;
+            let target = delete_link.dataset.target;
             let form = document.getElementById(target);
             form.submit();
         });

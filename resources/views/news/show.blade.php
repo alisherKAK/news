@@ -27,6 +27,13 @@
 
         @endcomponent
 
-    @endcomponent
+        @if (auth()->check())
 
+            @component('news._partials.comment_form', ['news' => $news])@endcomponent
+
+        @endif
+
+        @component('news._partials.comments_block', ['news' => $news])@endcomponent
+
+    @endcomponent
 @endsection

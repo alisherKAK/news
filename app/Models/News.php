@@ -14,4 +14,12 @@ class News extends Model
     function users() {
         return $this->belongsToMany(User::class, 'news_users');
     }
+
+    function comments() {
+        return $this->hasMany(Comment::class);
+    }
+
+    function getFirstTitleLetters($n) {
+        return trim(mb_strtolower(substr($this->title, 0, $n)), " \t\n\r\0\x0B");
+    }
 }

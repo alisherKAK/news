@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\News;
 use App\Models\NewsUser;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -42,5 +43,9 @@ class User extends Authenticatable
 
     function news() {
         return $this->belongsToMany(News::class, 'news_users');
+    }
+
+    function comments() {
+        return $this->hasMany(Comment::class);
     }
 }

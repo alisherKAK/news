@@ -19,6 +19,9 @@ Auth::routes();
 Route::name('news.')
     ->prefix('news')
     ->group(function (){
+        Route::post('/search', 'NewsController@search')
+            ->name('search');
+
         Route::get('/', 'NewsController@index')
             ->name('index');
         Route::get('/create', 'NewsController@create')

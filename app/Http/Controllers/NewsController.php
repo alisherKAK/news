@@ -73,10 +73,17 @@ class NewsController extends Controller
 
     public function update(Request $request, News $news)
     {
-        $request->validate($this->rules());
+        $request->validate([
+            'title' => 'required',
+            'content' => 'required',
+        ]);
 
         $file = $request->file('title_img');
-        $path = $this->updateFile($file);
+
+        if($file !== null)
+            $path = $this->updateFile($file);
+        else
+            $path = $news->title_img;
 
         $data = $request->except(['_token', '_method', 'title_img']);
         $news->update($data);
@@ -121,6 +128,29 @@ class NewsController extends Controller
         $newsUser->save();
 
         return redirect()->route('news.show', $news);
+    }
+
+    public function search(Request $request) {
+        $newses = News::all();
+
+        $phrase = trim($request->input('news_search'), " \t\n\r\0\x0B");
+        $categories = $request->except(['_token', 'news_search']);
+
+        foreach($categories as $key => $value) {
+            $newses = News::all()->where('category_id', $key);
+        }
+
+        foreach ($newses as $news) {
+            if($news->getFirstTitleLetters(strlen($phrase)) !== $phrase) {
+                $newses = $newses->reject($news);
+            }
+        }
+
+        return view('news.index', [
+            'title' => 'Новости',
+            'newses' => $newses,
+            'categories' => Category::all()
+        ]);
     }
 
     protected function rules() {
