@@ -48,8 +48,14 @@ class NewsController extends Controller
         return redirect()->route('news.index');
     }
 
-    public function show(News $news)
+    public function show(Request $request, News $news)
     {
+        $view = $news->views()->where('client_ip', $request->getClientIp())->first();
+        if($view === null)
+            $view = $news->views()->create(['client_ip' => $request->getClientIp()]);
+
+        $this->getGeolocationFromIp($view->client_ip);
+
         $isAuthor = auth()->user() !== null ?
             optional(auth()->user())->news->where('id', $news->id)->toArray() : false;
         $authors = $news->users;
@@ -58,7 +64,9 @@ class NewsController extends Controller
             'title' => $news->title,
             'news' => $news,
             'is_author' => $isAuthor,
-            'authors' => $authors
+            'is_admin' => optional(auth()->user())->role_id === 1,
+            'authors' => $authors,
+            'view_count' => $news->views()->count()
         ]);
     }
 
@@ -170,5 +178,27 @@ class NewsController extends Controller
         $file->storeAs('public/images/',"{$name}.{$file->extension()}");
         $path = 'uploads/images/' . "{$name}.{$file->extension()}";
         return $path;
+    }
+
+    protected function getGeolocationFromIp($ip) {
+        $apiKey = config('external_api_keys.ip_geolocation');
+        $location = $this->get_geolocation($apiKey, $ip);
+        $decodedLocation = json_decode($location, true);
+
+        return $decodedLocation;
+    }
+
+    protected function get_geolocation($apiKey, $ip, $lang = "en", $fields = "*", $excludes = "") {
+        $url = "https://api.ipgeolocation.io/ipgeo?apiKey=".$apiKey."&ip=".$ip."&lang=".$lang."&fields=".$fields."&excludes=".$excludes;
+        $cURL = curl_init();
+
+        curl_setopt($cURL, CURLOPT_URL, $url);
+        curl_setopt($cURL, CURLOPT_HTTPGET, true);
+        curl_setopt($cURL, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($cURL, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+            'Accept: application/json'
+        ));
+        return curl_exec($cURL);
     }
 }

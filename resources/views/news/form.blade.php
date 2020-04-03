@@ -7,7 +7,7 @@ $isEdit = isset($news);
 @section('content')
     @component('_partials.container')
     <div class="card card-body">
-    <form action="{{$isEdit ? route('news.update', $news) : route('news.store')}}" method="post" enctype="multipart/form-data">
+    <form action="{{$isEdit ? route('news.update', $news) : route('news.store')}}" method="post" enctype="multipart/form-data" id="news_form">
         @csrf
         @if($isEdit)
         @method('put')
@@ -36,7 +36,7 @@ $isEdit = isset($news);
 
         <div class="form-group">
             <label for="content">Статья</label>
-            <textarea name="content" id="" class="form-control">{{old('content') ?? ($news->content ?? '')}}</textarea>
+            <textarea name="content" class="summernote form-control">{{old('content') ?? ($news->content ?? '')}}</textarea>
             @error('content')
             <div class="alert alert-danger">
                 {{$message}}
@@ -60,6 +60,30 @@ $isEdit = isset($news);
 
         <button class="btn btn-success">Сохранить</button>
     </form>
-        </div>
+    </div>
+
+    <script>
+        $('.summernote').summernote({
+            placeholder: 'Hello stand alone ui',
+            tabsize: 2,
+            height: 120,
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'underline', 'clear']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link', 'picture', 'video']],
+                ['view', ['fullscreen', 'codeview', 'help']]
+            ]
+        });
+
+        $('#news_form').on('submit', function (event) {
+            let content = document.querySelector('.note-editable').innerHTML;
+            let textarea = document.getElementById('summernote');
+            textarea.innerHTML = content;
+            return true;
+        });
+    </script>
     @endcomponent
 @endsection

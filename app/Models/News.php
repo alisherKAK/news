@@ -19,6 +19,10 @@ class News extends Model
         return $this->hasMany(Comment::class);
     }
 
+    function views() {
+        return $this->hasMany(View::class);
+    }
+
     function getFirstTitleLetters($n) {
         return trim(mb_strtolower(substr($this->title, 0, $n)), " \t\n\r\0\x0B");
     }

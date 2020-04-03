@@ -4,6 +4,6 @@
         <h2>{{$news->title}}</h2>
     </a>
     <div class="card-body">
-        {{$news->content}}
+        {!! $news->content !!}
     </div>
 </div>

@@ -9,7 +9,7 @@ $id = \Illuminate\Support\Str::random();
     @endif
 
     <div class="card-body">
-        {{ $comment->content }}
+        {!! $comment->content !!}
     </div>
 
     <small class="card-footer d-flex align-items-center">

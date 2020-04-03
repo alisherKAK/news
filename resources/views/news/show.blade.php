@@ -3,25 +3,30 @@
 @section('content')
     @component('_partials.container')
 
-        @component('news._partials.actions', ['is_author' => $is_author, 'news' => $news])
+        @component('news._partials.actions', ['is_author' => $is_author, 'is_admin' => $is_admin, 'news' => $news])
 
             <div class="card col-12">
                 <div class="card-header">
                     <img src="{{asset($news->title_img)}}" style="height: 100px" alt="Title image" class="card-img-top">
                     <h2>{{$news->title}}</h2>
-                    <div class="navbar-collapse small">
-                        <ul class="navbar-nav list-group">
-                            Authors:
+                    <div>
+                        <ul class="list-inline small">
+                            <li class="list-inline-item">
+                                Authors:
+                            </li>
                             @foreach($authors as $author)
-                                <li class="nav-item">
-                                    {{$author->name}}
-                                </li>
+                            <li class="list-inline-item">
+                                {{$author->name}}
+                            </li>
                             @endforeach
                         </ul>
+                        <h6 class="text-right">
+                            Просмотров: {{$view_count}}
+                        </h6>
                     </div>
                 </div>
                 <div class="card-body">
-                    {{$news->content}}
+                    {!! $news->content !!}
                 </div>
             </div>
 
