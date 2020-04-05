@@ -23,6 +23,9 @@ class CreateViewsTable extends Migration
                 ->onDelete('cascade');
 
             $table->string('client_ip');
+            $table->string('country_name')
+                ->nullable()
+                ->default(null);
 
             $table->unique(['news_id', 'client_ip']);
 

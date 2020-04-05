@@ -54,7 +54,10 @@ class NewsController extends Controller
         if($view === null)
             $view = $news->views()->create(['client_ip' => $request->getClientIp()]);
 
-        $this->getGeolocationFromIp($view->client_ip);
+        $geo_location = $this->getGeolocationFromIp($view->client_ip);
+
+        $view->country_name = $geo_location['country_name'];
+        $view->save();
 
         $isAuthor = auth()->user() !== null ?
             optional(auth()->user())->news->where('id', $news->id)->toArray() : false;
@@ -182,7 +185,7 @@ class NewsController extends Controller
 
     protected function getGeolocationFromIp($ip) {
         $apiKey = config('external_api_keys.ip_geolocation');
-        $location = $this->get_geolocation($apiKey, $ip);
+        $location = $this->get_geolocation($apiKey, '77.245.96.19');
         $decodedLocation = json_decode($location, true);
 
         return $decodedLocation;
